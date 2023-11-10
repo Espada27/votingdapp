@@ -26,9 +26,9 @@ const steps = [
 
 ]
 
-export default function VoteProgressIndicator({currentWorkflowStatus}) {
+export default function VoteProgressIndicator({workflowStatus}) {
   const { activeStep } = useSteps({
-    index: currentWorkflowStatus,
+    index: workflowStatus,
     count: steps.length,
   })
 
