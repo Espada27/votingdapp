@@ -4,6 +4,8 @@ pragma solidity 0.8.23;
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 contract Voting is Ownable {
+    uint public winningProposalID;
+
     struct Voter {
         bool isRegistered;
         bool hasVoted;
@@ -26,7 +28,6 @@ contract Voting is Ownable {
 
     WorkflowStatus public workflowStatus;
     Proposal[] proposalsArray;
-    uint private winningProposalId;
     mapping(address => Voter) voters;
 
     event VoterRegistered(address voterAddress);
@@ -109,9 +110,9 @@ contract Voting is Ownable {
 
         if (
             proposalsArray[_id].voteCount >
-            proposalsArray[winningProposalId].voteCount
+            proposalsArray[winningProposalID].voteCount
         ) {
-            winningProposalId = _id;
+            winningProposalID = _id;
         }
 
         emit Voted(msg.sender, _id);
@@ -182,17 +183,6 @@ contract Voting is Ownable {
         emit WorkflowStatusChange(
             WorkflowStatus.VotingSessionEnded,
             WorkflowStatus.VotesTallied
-        );
-    }
-
-    function getWinningProposal() external view returns (string memory, uint) {
-        require(
-            workflowStatus == WorkflowStatus.VotesTallied,
-            "The votes are not tallied"
-        );
-        return (
-            proposalsArray[winningProposalId].description,
-            proposalsArray[winningProposalId].voteCount
         );
     }
 }
