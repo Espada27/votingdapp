@@ -9,6 +9,7 @@ import { useAccount } from 'wagmi';
 import ContractInfoDisplay from "./ContractInfoDisplay";
 import { abi, contractAddress } from '../constants/constant';
 import { useToast } from '@chakra-ui/react'
+import {getToastMessage} from "./utils/helper";
 
 
 export default function Main() {
@@ -28,9 +29,10 @@ export default function Main() {
         })
         const { hash } = await writeContract(request)
         await fetchWorkflowStatus()
+        const updatedMessage = getToastMessage(workflowStatus + 1);
         toast({
-          title: 'Congrats.',
-          description: "C'est ok",
+          title: 'Congrats !',
+          description: updatedMessage,
           status: 'success',
           duration: 9000,
           isClosable: true,
@@ -57,9 +59,10 @@ export default function Main() {
       })
       const { hash } = await writeContract(request)
       await fetchWorkflowStatus()
+      const updatedMessage = getToastMessage(workflowStatus + 1);
       toast({
-        title: 'Congrats.',
-        description: "C'est ok",
+        title: 'Congrats !',
+        description: updatedMessage,
         status: 'success',
         duration: 9000,
         isClosable: true,
@@ -86,9 +89,10 @@ export default function Main() {
     })
     const { hash } = await writeContract(request)
     await fetchWorkflowStatus()
+    const updatedMessage = getToastMessage(workflowStatus + 1);
     toast({
-      title: 'Congrats.',
-      description: "C'est ok",
+      title: 'Congrats !',
+      description: updatedMessage,
       status: 'success',
       duration: 9000,
       isClosable: true,
@@ -115,9 +119,10 @@ export default function Main() {
     })
     const { hash } = await writeContract(request)
     await fetchWorkflowStatus()
+    const updatedMessage = getToastMessage(workflowStatus + 1);
     toast({
-      title: 'Congrats.',
-      description: "C'est ok",
+      title: 'Congrats !',
+      description: updatedMessage,
       status: 'success',
       duration: 9000,
       isClosable: true,
@@ -144,9 +149,10 @@ const tallyVotes = async () => {
     })
     const { hash } = await writeContract(request)
     await fetchWorkflowStatus()
+    const updatedMessage = getToastMessage(workflowStatus + 1);
     toast({
-      title: 'Congrats.',
-      description: "C'est ok",
+      title: 'Congrats !',
+      description: updatedMessage,
       status: 'success',
       duration: 9000,
       isClosable: true,
