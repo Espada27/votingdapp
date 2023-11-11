@@ -17,19 +17,21 @@ export default function Main() {
     const { address, isConnected } = useAccount();
     
     const fetchWorkflowStatus = async () => {
-        try {
-            const status = await readContract({
-                address: contractAddress,
-                abi: abi,
-                functionName: 'workflowStatus',
-        });
-        setWorkflowStatus(status);
-    } catch (err) {
-        console.error("Error in fetchWorkflowStatus:", err.message);
-    }
-};
+      try {
+          const response = await readContract({
+              address: contractAddress,
+              abi: abi,
+              functionName: 'workflowStatus',
+          });
+          console.log("workFlowStatus avant le set : ", workflowStatus)
+          console.log("le retour de la lecture du workflow dans le contrat : ", response);
+          setWorkflowStatus(response);
+      } catch (err) {
+          console.error("Error in fetchWorkflowStatus:", err.message);
+      }
+  };
 
-    const checkIfOwner = async () => {
+const checkIfOwner = async () => {
   try {
           const data = await readContract({
           address: contractAddress,
@@ -49,7 +51,8 @@ export default function Main() {
 
     useEffect(() => {
     fetchWorkflowStatus();
-}, [address, isConnected, workflowStatus]);
+}, [address, isConnected,]);
+
 
 
 
