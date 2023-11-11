@@ -14,25 +14,44 @@ import {
 } from '@chakra-ui/react';
 
 const steps = [
-  { title: '0', description: 'Registering Voters' },
-  { title: '1', description: 'Proposals Registration Started' },
-  { title: '2', description: 'Proposals Registration Ended' },
-  { title: '3', description: 'Voting Session Started' },
-  { title: '4', description: 'Voting Session Ended' },
-  { title: '5', description: 'Votes Tallied' },
+  { description: 'Registering Voters' },
+  { description: 'Proposals Registration Started' },
+  { description: 'Proposals Registration Ended' },
+  { description: 'Voting Session Started' },
+  { description: 'Voting Session Ended' },
+  { description: 'Votes Tallied' },
 ];
 
-export default function VoteProgressIndicator({workflowStatus}) {
-  console.log("workflowStatus dans VoteProgressIndicator: ", workflowStatus);
+export default function VoteProgressIndicator({workflowStatus, onStartRegistering, onEndRegistering, onStartVoting, onEndVoting, ontallyVotes}) {
+
 
   // Utilisez directement workflowStatus comme activeStep
-  const activeStep = workflowStatus;
+  const activeStep = workflowStatus
+
+
+  const handleStepClick = (stepIndex) => {
+    if (stepIndex === 1) {
+      onStartRegistering() 
+    }
+    if (stepIndex === 2) {
+      onEndRegistering()
+    }
+    if (stepIndex === 3) {
+      onStartVoting()
+    }
+    if (stepIndex === 4) {
+      onEndVoting()
+    }
+    if (stepIndex === 5) {
+      ontallyVotes()
+    }
+};
 
   return (
     <Box marginTop="6" marginBottom="6" marginRight="20" marginLeft="20">
       <Stepper size='md' index={activeStep}>
         {steps.map((step, index) => (
-          <Step key={index}>
+          <Step key={index} onClick={() => handleStepClick(index)}>
             <VStack spacing={2} align="center">
               <StepIndicator>
                 <StepStatus
