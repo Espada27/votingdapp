@@ -9,7 +9,7 @@ import { useAccount } from 'wagmi';
 import ContractInfoDisplay from "./ContractInfoDisplay";
 import { abi, contractAddress } from '../constants/constant';
 import { useToast } from '@chakra-ui/react'
-import {getToastMessage} from "./utils/helper";
+import {getToastMessage, notOwnerToast} from "./utils/helper";
 
 
 export default function Main() {
@@ -21,6 +21,18 @@ export default function Main() {
 
 
   const startProposalsRegistering = async () => {
+    if (!isOwner) {
+      toast({
+          title: 'Erreur',
+          description: "VOUS N'ETES PAS PROPRIETAIRE DU CONTRAT ! Vous ne pouvez accéder à ces fonctionnalités",
+          status: 'error',
+          duration: 9000,
+          isClosable: true,
+      });
+      return;
+  }
+
+
       try {
         const { request } = await prepareWriteContract({
           address: contractAddress,
@@ -51,6 +63,16 @@ export default function Main() {
   };
 
   const endProposalsRegistering = async () => {
+    if (!isOwner) {
+      toast({
+          title: 'Erreur',
+          description: "VOUS N'ETES PAS PROPRIETAIRE DU CONTRAT ! Vous ne pouvez accéder à ces fonctionnalités",
+          status: 'error',
+          duration: 9000,
+          isClosable: true,
+      });
+      return;
+  }
     try {
       const { request } = await prepareWriteContract({
         address: contractAddress,
@@ -81,6 +103,16 @@ export default function Main() {
 }
 
   const startVotingSession = async () => {
+    if (!isOwner) {
+      toast({
+          title: 'Erreur',
+          description: "VOUS N'ETES PAS PROPRIETAIRE DU CONTRAT ! Vous ne pouvez accéder à ces fonctionnalités",
+          status: 'error',
+          duration: 9000,
+          isClosable: true,
+      });
+      return;
+  }
   try {
     const { request } = await prepareWriteContract({
       address: contractAddress,
@@ -111,6 +143,16 @@ export default function Main() {
 }
 
   const endVotingSession = async () => {
+    if (!isOwner) {
+      toast({
+          title: 'Erreur',
+          description: "VOUS N'ETES PAS PROPRIETAIRE DU CONTRAT ! Vous ne pouvez accéder à ces fonctionnalités",
+          status: 'error',
+          duration: 9000,
+          isClosable: true,
+      });
+      return;
+  }
   try {
     const { request } = await prepareWriteContract({
       address: contractAddress,
@@ -141,6 +183,16 @@ export default function Main() {
 }
 
 const tallyVotes = async () => {
+  if (!isOwner) {
+    toast({
+        title: 'Erreur',
+        description: "VOUS N'ETES PAS PROPRIETAIRE DU CONTRAT ! Vous ne pouvez accéder à ces fonctionnalités",
+        status: 'error',
+        duration: 9000,
+        isClosable: true,
+    });
+    return;
+}
   try {
     const { request } = await prepareWriteContract({
       address: contractAddress,
