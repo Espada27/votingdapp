@@ -10,7 +10,8 @@ import {
   Stepper,
   Box,
   VStack,
-  StepStatus
+  StepStatus,
+  Button
 } from '@chakra-ui/react';
 
 const steps = [
@@ -47,30 +48,37 @@ export default function VoteProgressIndicator({workflowStatus, onStartRegisterin
     }
 };
 
-  return (
-    <Box marginTop="6" marginBottom="6" marginRight="20" marginLeft="20">
-      <Stepper size='md' index={activeStep}>
-        {steps.map((step, index) => (
-          <Step key={index} onClick={() => handleStepClick(index)}>
-            <VStack spacing={2} align="center">
-              <StepIndicator>
-                <StepStatus
-                  complete={<StepIcon />}
-                  incomplete={<StepNumber />}
-                  active={<StepNumber />}
-                />
-              </StepIndicator>
-
-              <Box textAlign="center">
-                <StepTitle fontSize="sm">{step.title}</StepTitle>
-                <StepDescription fontSize="xs">{step.description}</StepDescription>
-              </Box>
-            </VStack>
-
-            <StepSeparator />
-          </Step>
-        ))}
-      </Stepper>
-    </Box>
-  );
+return (
+  <Box marginTop="6" marginBottom="6" marginRight="20" marginLeft="20">
+    <Stepper size='md' index={activeStep}>
+      {steps.map((step, index) => (
+        <Step key={index}>
+          <VStack spacing={2} align="center">
+            <StepIndicator>
+              <StepStatus
+                complete={<StepIcon />}
+                incomplete={<StepNumber />}
+                active={<StepNumber />}
+              />
+            </StepIndicator>
+            {index === workflowStatus + 1 ? (
+              <Button 
+                size="sm" 
+                colorScheme="blue" 
+                onClick={() => handleStepClick(index)}
+              >
+                {step.description}
+              </Button>
+            ) : (
+              <StepDescription fontSize="xs">
+                {step.description}
+              </StepDescription>
+            )}
+          </VStack>
+          <StepSeparator />
+        </Step>
+      ))}
+    </Stepper>
+  </Box>
+)
 }
