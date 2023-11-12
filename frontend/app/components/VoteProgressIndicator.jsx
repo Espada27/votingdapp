@@ -31,20 +31,24 @@ export default function VoteProgressIndicator({workflowStatus, onStartRegisterin
 
 
   const handleStepClick = (stepIndex) => {
-    if (stepIndex === 1) {
-      onStartRegistering() 
-    }
-    if (stepIndex === 2) {
-      onEndRegistering()
-    }
-    if (stepIndex === 3) {
-      onStartVoting()
-    }
-    if (stepIndex === 4) {
-      onEndVoting()
-    }
-    if (stepIndex === 5) {
-      ontallyVotes()
+    switch (stepIndex) {
+        case 1:
+            onStartRegistering();
+            break;
+        case 2:
+            onEndRegistering();
+            break;
+        case 3:
+            onStartVoting();
+            break;
+        case 4:
+            onEndVoting();
+            break;
+        case 5:
+            ontallyVotes();
+            break;
+        default:
+            console.log("Etape inconnue");
     }
 };
 
