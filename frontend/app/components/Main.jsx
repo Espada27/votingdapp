@@ -6,6 +6,7 @@ import ContractManager from "./ContractManager";
 import { useAccount } from 'wagmi';
 import ContractInfoDisplay from "./ContractInfoDisplay";
 import useContractState from "../hooks/useContractState";
+import ContractContext from "../context/ContractContext";
 
 
 export default function Main() {
@@ -20,23 +21,28 @@ export default function Main() {
       tallyVotes,
   } = useContractState();
 
+  
 
+  const contextValue = {
+      workflowStatus,
+      isOwner,
+      startProposalsRegistering,
+      endProposalsRegistering,
+      startVotingSession,
+      endVotingSession,
+      tallyVotes,
+  }
 
   return (
+    <ContractContext.Provider value={contextValue}>
     <Flex direction="column" h="100vh">
       <Nav />
-      <VoteProgressIndicator 
-      workflowStatus = {workflowStatus} 
-      onStartRegistering={startProposalsRegistering} 
-      onEndRegistering={endProposalsRegistering}
-      onStartVoting={startVotingSession}
-      onEndVoting={endVotingSession}
-      ontallyVotes={tallyVotes}
-      />
+      <VoteProgressIndicator />
       <Flex flex="1">
         <ContractManager isOwner={isOwner} isConnected={isConnected} flex="2" />
         <ContractInfoDisplay flex="1" />
       </Flex>
     </Flex>
+    </ContractContext.Provider>
   )
 }

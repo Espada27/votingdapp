@@ -219,8 +219,6 @@ const useContractState = () => {
                 abi: abi,
                 functionName: 'workflowStatus',
             });
-            console.log("workFlowStatus avant le set : ", workflowStatus)
-            console.log("le retour de la lecture du workflow dans le contrat : ", response);
             setWorkflowStatus(response);
         } catch (err) {
             console.error("Error in fetchWorkflowStatus:", err.message);
