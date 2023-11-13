@@ -6,7 +6,7 @@ import DisplayAddVoter from './DisplayAddVoter';
 import DisplayGetProposalFromIndex from './DisplayGetProposalFromIndex';
 
 export default function ContractManager({ isConnected }) {
-    const { workflowStatus, isOwner, isRegistered, checkIfRegistered } = useContext(ContractContext);
+    const { workflowStatus, isOwner, isRegistered } = useContext(ContractContext);
 
 
     return (

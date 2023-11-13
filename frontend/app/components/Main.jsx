@@ -10,7 +10,7 @@ import ContractContext from "../context/ContractContext";
 
 
 export default function Main() {
-    const { address, isConnected } = useAccount();
+    const {isConnected } = useAccount();
     const {
       workflowStatus,
       isOwner,

@@ -16,7 +16,6 @@ export default function DisplayGetProposalFromIndex() {
         if (index !== '') {
             try {
                 const proposalData = await getOneProposal(index);
-                console.log("Proposal data received:", proposalData);
                 setProposal(proposalData);
             } catch (error) {
                 console.error("Erreur lors de la récupération de la proposal:", error);
