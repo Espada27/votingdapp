@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { readContract, prepareWriteContract, writeContract, getWalletClient} from '@wagmi/core';
 import { abi, contractAddress } from '../constants/constant';
 import { useToast } from '@chakra-ui/react';
-import { useAccount, useContractRead} from 'wagmi';
+import { useAccount} from 'wagmi';
 import { getWorkflowMessage } from '../components/utils/helper';
 import { isAddress } from 'viem'
 
@@ -14,11 +14,6 @@ const useContractState = () => {
     const [isRegistered, setIsRegistered] = useState(false);
     const { address, isConnected } = useAccount();
     const toast = useToast();
-
-    
-
-    console.log("voters : ", voters)
-
 
 
     const getOneProposal = async (index) => {
@@ -63,7 +58,6 @@ const useContractState = () => {
       return;
   }    
 
-  console.log("Préparation de la requête pour voterAddress:", voterAddress);
 
       try {
           const { request } = await prepareWriteContract({
@@ -322,9 +316,9 @@ const useContractState = () => {
               args: [address],
               account: walletClient.account,
           });
-          console.log("Voter info received:", voterInfo); 
+
           setIsRegistered(voterInfo.isRegistered);
-          console.log("isRegistered set to:", voterInfo.isRegistered); 
+
       } catch (err) {
           console.log("Error in checkIfRegistered:", err.message); 
           setIsRegistered(false)
@@ -346,13 +340,11 @@ const useContractState = () => {
       }
 
     useEffect(() => {
-        console.log("useEffect triggered for address and isConnected", { address, isConnected });
         checkIfOwner();
         fetchWorkflowStatus();
     }, [address, isConnected, voters]);
 
     useEffect(() => {
-      console.log("useEffect triggered for checkIfRegistered", { address });
       checkIfRegistered()
     }, [address,])
 
