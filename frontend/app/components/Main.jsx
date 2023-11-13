@@ -10,15 +10,19 @@ import ContractContext from "../context/ContractContext";
 
 
 export default function Main() {
-    const { address, isConnected } = useAccount();
+    const {isConnected } = useAccount();
     const {
       workflowStatus,
       isOwner,
+      isRegistered,
+      checkIfRegistered,
       startProposalsRegistering,
       endProposalsRegistering,
       startVotingSession,
       endVotingSession,
       tallyVotes,
+      addVoter,
+      getOneProposal
   } = useContractState();
 
   
@@ -26,11 +30,15 @@ export default function Main() {
   const contextValue = {
       workflowStatus,
       isOwner,
+      isRegistered,
+      checkIfRegistered,
+      addVoter,
       startProposalsRegistering,
       endProposalsRegistering,
       startVotingSession,
       endVotingSession,
       tallyVotes,
+      getOneProposal,
   }
 
   return (
@@ -39,7 +47,7 @@ export default function Main() {
       <Nav />
       <VoteProgressIndicator />
       <Flex flex="1">
-        <ContractManager isOwner={isOwner} isConnected={isConnected} flex="2" />
+        <ContractManager isConnected={isConnected} flex="2" />
         <ContractInfoDisplay flex="1" />
       </Flex>
     </Flex>
