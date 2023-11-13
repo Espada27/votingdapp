@@ -1,16 +1,103 @@
 'use client'
 import { useState, useEffect } from 'react';
-import { readContract, prepareWriteContract, writeContract } from '@wagmi/core';
+import { readContract, prepareWriteContract, writeContract, getWalletClient} from '@wagmi/core';
 import { abi, contractAddress } from '../constants/constant';
 import { useToast } from '@chakra-ui/react';
-import { useAccount } from 'wagmi';
+import { useAccount, useContractRead} from 'wagmi';
 import { getWorkflowMessage } from '../components/utils/helper';
+import { isAddress } from 'viem'
 
 const useContractState = () => {
     const [workflowStatus, setWorkflowStatus] = useState(5);
+    const [voters, setVoters] = useState([]);
     const [isOwner, setIsOwner] = useState(false);
+    const [isRegistered, setIsRegistered] = useState(false);
     const { address, isConnected } = useAccount();
     const toast = useToast();
+
+    
+
+    console.log("voters : ", voters)
+
+
+
+    const getOneProposal = async (index) => {
+      const walletClient = await getWalletClient();
+      try {
+          const proposal = await readContract({
+              address: contractAddress, 
+              abi: abi,         
+              functionName: 'getOneProposal',
+              args: [index],
+              account: walletClient.account            
+          });
+          return proposal;
+      } catch (error) {
+          console.error('Erreur lors de la récupération de la proposal:', error);
+          throw error;
+      }
+  };
+
+
+    const addVoter = async (voterAddress) => {
+      console.log("Adding voter:", voterAddress);
+      if (!isOwner) {
+        toast({
+            title: 'Erreur',
+            description: "Vous n'êtes pas propriétaire du contrat ! Vous ne pouvez pas accéder à ces fonctionnalités",
+            status: 'error',
+            duration: 9000,
+            isClosable: true,
+        });
+        return;
+    }
+    
+    if (!voterAddress || !isAddress(voterAddress)) {
+      toast({
+          title: 'Erreur',
+          description: "Adresse Ethereum non valide ou non fournie.",
+          status: 'error',
+          duration: 9000,
+          isClosable: true,
+      });
+      return;
+  }    
+
+  console.log("Préparation de la requête pour voterAddress:", voterAddress);
+
+      try {
+          const { request } = await prepareWriteContract({
+              address: contractAddress,
+              abi: abi,
+              functionName: 'addVoter',
+              args: [voterAddress],
+          })
+  
+          const { hash } = await writeContract(request);
+  
+          //await waitForTransaction(hash);
+  
+          toast({
+              title: 'Succès !',
+              description: 'Vous avez ajouté un nouveau votant',
+              status: 'success',
+              duration: 9000,
+              isClosable: true,
+          });
+  
+          setVoters([...voters, voterAddress]);
+  
+      } catch (error) {
+          console.error("Erreur lors de l'ajout d'un votant", error)
+          toast({
+              title: 'Erreur',
+              description: "Une erreur est survenue lors de l'ajout du votant",
+              status: 'error',
+              duration: 9000,
+              isClosable: true,
+          });
+      }
+  };
 
     const startProposalsRegistering = async () => {
         if (!isOwner) {
@@ -224,6 +311,25 @@ const useContractState = () => {
             console.error("Error in fetchWorkflowStatus:", err.message);
         }
     };
+    const checkIfRegistered = async () => {
+      const walletClient = await getWalletClient();
+      
+      try {
+          const voterInfo = await readContract({
+              address: contractAddress,
+              abi: abi,
+              functionName: 'getVoter',
+              args: [address],
+              account: walletClient.account,
+          });
+          console.log("Voter info received:", voterInfo); 
+          setIsRegistered(voterInfo.isRegistered);
+          console.log("isRegistered set to:", voterInfo.isRegistered); 
+      } catch (err) {
+          console.log("Error in checkIfRegistered:", err.message); 
+          setIsRegistered(false)
+      }
+  }
 
     const checkIfOwner = async () => {
         try {
@@ -240,19 +346,29 @@ const useContractState = () => {
       }
 
     useEffect(() => {
+        console.log("useEffect triggered for address and isConnected", { address, isConnected });
         checkIfOwner();
         fetchWorkflowStatus();
-    }, [address, isConnected]);
+    }, [address, isConnected, voters]);
+
+    useEffect(() => {
+      console.log("useEffect triggered for checkIfRegistered", { address });
+      checkIfRegistered()
+    }, [address,])
+
 
     return {
         workflowStatus,
         isOwner,
+        isRegistered,
+        checkIfRegistered,
         startProposalsRegistering,
         endProposalsRegistering,
         startVotingSession,
         endVotingSession,
         tallyVotes,
-
+        addVoter,
+        getOneProposal
     };
 };
 
