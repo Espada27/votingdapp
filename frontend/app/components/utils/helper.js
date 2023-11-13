@@ -1,4 +1,4 @@
-export const getToastMessage = (workflowStatus) => {
+export const getWorkflowMessage = (workflowStatus) => {
     switch(workflowStatus) {
       case 0:
       return "Enregistrement des électeurs commencé.";

@@ -6,13 +6,14 @@ import {
   StepIndicator,
   StepNumber,
   StepSeparator,
-  StepTitle,
   Stepper,
   Box,
   VStack,
   StepStatus,
   Button
 } from '@chakra-ui/react';
+import { useContext } from 'react';
+import ContractContext from '../context/ContractContext';
 
 const steps = [
   { description: 'Registering Voters' },
@@ -23,28 +24,38 @@ const steps = [
   { description: 'Votes Tallied' },
 ];
 
-export default function VoteProgressIndicator({workflowStatus, onStartRegistering, onEndRegistering, onStartVoting, onEndVoting, ontallyVotes}) {
+export default function VoteProgressIndicator() {
 
-
-  // Utilisez directement workflowStatus comme activeStep
+  const {
+    workflowStatus,
+    startProposalsRegistering,
+    endProposalsRegistering,
+    startVotingSession,
+    endVotingSession,
+    tallyVotes} = useContext(ContractContext)
+  
   const activeStep = workflowStatus
 
 
   const handleStepClick = (stepIndex) => {
-    if (stepIndex === 1) {
-      onStartRegistering() 
-    }
-    if (stepIndex === 2) {
-      onEndRegistering()
-    }
-    if (stepIndex === 3) {
-      onStartVoting()
-    }
-    if (stepIndex === 4) {
-      onEndVoting()
-    }
-    if (stepIndex === 5) {
-      ontallyVotes()
+    switch (stepIndex) {
+        case 1:
+            startProposalsRegistering();
+            break;
+        case 2:
+            endProposalsRegistering();
+            break;
+        case 3:
+            startVotingSession();
+            break;
+        case 4:
+            endVotingSession();
+            break;
+        case 5:
+            tallyVotes();
+            break;
+        default:
+            console.log("Etape inconnue");
     }
 };
 
