@@ -29,7 +29,8 @@ export default function ContractManager({ isConnected }) {
                     <>
                         <DisplayAddProposal />
                         <Divider my={4} />
-                        <DisplayGetProposalFromIndex />
+                        <Text>Tableau des proposals :</Text>
+                        
                     </>
                 )}
             </VStack>
