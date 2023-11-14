@@ -18,7 +18,7 @@ export default function ContractInfoDisplay() {
   const [liveAddresses, setLiveAddresses] = useState([]);
 
   useEffect(() => {
-    const getLogs = async () => {
+    const getVoterRegisteredLogs = async () => {
       const voterLogs = await client.getLogs({
         address: contractAddress,
         event: parseAbiItem("event VoterRegistered(address voterAddress)"),
@@ -31,7 +31,7 @@ export default function ContractInfoDisplay() {
       setAddresses(pastVoterAddresses);
     };
 
-    getLogs();
+    getVoterRegisteredLogs();
   }, []);
 
   useContractEvent({
