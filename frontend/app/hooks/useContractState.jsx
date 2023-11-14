@@ -16,6 +16,34 @@ const useContractState = () => {
     const toast = useToast();
 
 
+    const addProposal = async(proposal) => {
+      console.log("adding proposal : ", proposal)
+      const walletClient = await getWalletClient();
+      try{
+        const { request } = await prepareWriteContract({
+          address: contractAddress,
+          abi: abi,
+          functionName: 'addProposal',
+          args: [proposal],
+          account: walletClient.account,
+        });
+        const { hash } = await writeContract(request);
+        //await waitForTransaction(hash);
+        toast({
+          title: 'Succès !',
+          description: 'Vous avez ajouté une nouvelle proposition',
+          status: 'success',
+          duration: 9000,
+          isClosable: true,
+        });
+        
+      }
+      catch (error) {
+        console.error('Erreur lors de l\'ajout de la proposal:', error);
+        throw error;
+    }
+  }
+
     const getOneProposal = async (index) => {
       const walletClient = await getWalletClient();
       try {
@@ -360,7 +388,8 @@ const useContractState = () => {
         endVotingSession,
         tallyVotes,
         addVoter,
-        getOneProposal
+        getOneProposal,
+        addProposal
     };
 };
 

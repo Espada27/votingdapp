@@ -1,8 +1,9 @@
 'use client'
-import { Box, Alert, AlertIcon, Button, Text } from '@chakra-ui/react';
+import { Box, Alert, AlertIcon, Button, Text, VStack, Divider } from '@chakra-ui/react';
 import { useContext } from 'react';
 import ContractContext from '../context/ContractContext';
 import DisplayAddVoter from './DisplayAddVoter';
+import DisplayAddProposal from './DisplayAddProposal';
 import DisplayGetProposalFromIndex from './DisplayGetProposalFromIndex';
 
 export default function ContractManager({ isConnected }) {
@@ -18,17 +19,20 @@ export default function ContractManager({ isConnected }) {
                 </Alert>
             )}
     
-                <>
-                    {isRegistered && <Text>Vous êtes enregistré comme votant.</Text>}
-                    {isRegistered === false && <Text>Vous n'êtes pas enregistré comme votant.</Text>}
-                </>
+            {isRegistered && <Text>Vous êtes enregistré comme votant.</Text>}
+            {isRegistered === false && <Text>Vous n'êtes pas enregistré comme votant.</Text>}
 
-            {isConnected && isOwner && workflowStatus === 0 && (
-                <DisplayAddVoter />
-            )}
-            {isConnected && isRegistered && workflowStatus === 1 && (
-                <DisplayGetProposalFromIndex />
-            )}
+            <VStack spacing={4}>
+                {isConnected && isOwner && workflowStatus === 0 && <DisplayAddVoter />}
+
+                {isConnected && isRegistered && workflowStatus === 1 && (
+                    <>
+                        <DisplayAddProposal />
+                        <Divider my={4} />
+                        <DisplayGetProposalFromIndex />
+                    </>
+                )}
+            </VStack>
         </Box>
     );
 }
