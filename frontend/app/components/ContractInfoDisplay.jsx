@@ -1,10 +1,12 @@
-import { Box, Text } from '@chakra-ui/react';
+import { Box, Text, Divider } from '@chakra-ui/react';
+import DisplayGetProposalFromIndex from './DisplayGetProposalFromIndex';
 
 export default function ContractInfoDisplay() {
     return (
         <Box flex={1} p={4}>
           <Text>Informations du Contrat</Text>
-          {/* Ici, tu peux afficher les informations récupérées via les getters du contrat */}
+          <Divider my={4} />
+          <DisplayGetProposalFromIndex />
         </Box>
       );
 }
