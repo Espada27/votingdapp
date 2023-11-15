@@ -9,8 +9,12 @@ import DisplayGetProposalFromIndex from "./DisplayGetProposalFromIndex";
 export default function ContractInfoDisplay() {
   const [addresses, setAddresses] = useState([]);
   const [liveAddresses, setLiveAddresses] = useState([]);
+  const [proposals, setProposals] = useState([]);
+  const [liveProposals, setLiveProposals] = useState([]);
+
   const viemPublicClient = usePublicClient();
 
+  //Get past voters
   useEffect(() => {
     const getVoterRegisteredLogs = async () => {
       const voterLogs = await viemPublicClient.getLogs({
@@ -28,6 +32,24 @@ export default function ContractInfoDisplay() {
     getVoterRegisteredLogs();
   }, []);
 
+  //Get past proposals
+  useEffect(() => {
+    const getProposalsLogs = async () => {
+      const proposalsLogs = await viemPublicClient.getLogs({
+        address: contractAddress,
+        event: parseAbiItem("event ProposalRegistered(uint proposalId)"),
+        fromBlock: 0n,
+      });
+      const pastProposals = [];
+      for (const log of proposalsLogs) {
+        pastProposals.push(log.args.proposalId);
+      }
+      setProposals(pastProposals);
+    };
+    getProposalsLogs();
+  }, []);
+
+  //Get new voters
   useContractEvent({
     address: contractAddress,
     abi,
@@ -43,6 +65,22 @@ export default function ContractInfoDisplay() {
     },
   });
 
+  //Get new proposals
+  useContractEvent({
+    address: contractAddress,
+    abi,
+    eventName: "ProposalRegistered",
+    listener(events) {
+      const newProposals = [];
+      for (const event of events) {
+        newProposals.push(event.args.proposalId);
+      }
+      if (newProposals.length) {
+        setLiveProposals(newProposals);
+      }
+    },
+  });
+
   useEffect(() => {
     const updatedAddresses = [];
     liveAddresses.forEach((addr) => {
@@ -53,10 +91,21 @@ export default function ContractInfoDisplay() {
     setAddresses((previous) => previous.concat(updatedAddresses));
   }, [liveAddresses]);
 
+  useEffect(() => {
+    const updatedProposals = [];
+    liveProposals.forEach((proposal) => {
+      if (!proposals.includes(proposal)) {
+        updatedProposals.push(proposal);
+      }
+    });
+    setProposals((previous) => previous.concat(updatedProposals));
+  }, [liveProposals]);
+
   return (
     <Box flex={1} p={4}>
       <Text>Informations du Contrat</Text>
       <Text>Nombre de votants : {addresses.length}</Text>
+      <Text>Nombre de propositions : {proposals.length}</Text>
       {/* Ici, tu peux afficher les informations récupérées via les getters du contrat */}
       <Divider my={4} />
       <DisplayGetProposalFromIndex />
