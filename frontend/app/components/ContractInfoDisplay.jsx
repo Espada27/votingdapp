@@ -1,25 +1,19 @@
 "use client";
 import { useEffect, useState } from "react";
-import { useContractEvent } from "wagmi";
+import { useContractEvent, usePublicClient } from "wagmi";
 import { abi, contractAddress } from "../constants/constant";
 import { parseAbiItem } from "viem";
-import { createPublicClient, http } from "viem";
-import { hardhat } from "viem/chains";
 import { Box, Text, Divider } from "@chakra-ui/react";
 import DisplayGetProposalFromIndex from "./DisplayGetProposalFromIndex";
-
-const client = createPublicClient({
-  chain: hardhat,
-  transport: http(),
-});
 
 export default function ContractInfoDisplay() {
   const [addresses, setAddresses] = useState([]);
   const [liveAddresses, setLiveAddresses] = useState([]);
+  const viemPublicClient = usePublicClient();
 
   useEffect(() => {
     const getVoterRegisteredLogs = async () => {
-      const voterLogs = await client.getLogs({
+      const voterLogs = await viemPublicClient.getLogs({
         address: contractAddress,
         event: parseAbiItem("event VoterRegistered(address voterAddress)"),
         fromBlock: 0n,
