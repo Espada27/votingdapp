@@ -4,7 +4,7 @@ import { useContext } from 'react';
 import ContractContext from '../context/ContractContext';
 import DisplayAddVoter from './DisplayAddVoter';
 import DisplayAddProposal from './DisplayAddProposal';
-import DisplayGetProposalFromIndex from './DisplayGetProposalFromIndex';
+import DisplayProposals from './DisplayProposals';
 
 export default function ContractManager({ isConnected }) {
     const { workflowStatus, isOwner, isRegistered } = useContext(ContractContext);
@@ -18,9 +18,10 @@ export default function ContractManager({ isConnected }) {
                     Veuillez connecter votre portefeuille à notre Dapp.
                 </Alert>
             )}
+            <DisplayProposals />
     
-            {isRegistered && <Text>Vous êtes enregistré comme votant.</Text>}
-            {isRegistered === false && <Text>Vous n'êtes pas enregistré comme votant.</Text>}
+            {/* {isRegistered && <Text>Vous êtes enregistré comme votant.</Text>}
+            {isRegistered === false && <Text>Vous n'êtes pas enregistré comme votant.</Text>} */}
 
             <VStack spacing={4}>
                 {isConnected && isOwner && workflowStatus === 0 && <DisplayAddVoter />}
