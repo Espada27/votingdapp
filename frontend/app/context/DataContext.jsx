@@ -25,6 +25,8 @@ export const DataProvider = ({ children }) => {
     const getPastProposals = async () => {
       if (isRegistered) {
         setProposals(await getProposals(proposalIds));
+      } else {
+        setProposals([]);
       }
     };
     getPastProposals();
