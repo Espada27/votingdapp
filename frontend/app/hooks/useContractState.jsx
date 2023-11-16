@@ -367,9 +367,9 @@ const useContractState = () => {
       console.error("Error in fetchWorkflowStatus:", err.message);
     }
   };
+
   const checkIfRegistered = async () => {
     const walletClient = await getWalletClient();
-
     try {
       const voterInfo = await readContract({
         address: contractAddress,
@@ -409,6 +409,12 @@ const useContractState = () => {
       checkIfRegistered();
     }
   }, [address]);
+
+  useEffect(() => {
+    if (workflowStatus === 1) {
+      checkIfRegistered();
+    }
+  }, [workflowStatus]);
 
   return {
     workflowStatus,
