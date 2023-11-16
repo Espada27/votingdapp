@@ -1,6 +1,5 @@
 "use client";
 import { Box, Text, Divider } from "@chakra-ui/react";
-import DisplayGetProposalFromIndex from "./DisplayGetProposalFromIndex";
 import { useDataContext } from "../context/DataContext";
 import { useContext } from "react";
 import ContractContext from "../context/ContractContext";
@@ -22,8 +21,6 @@ export default function ContractInfoDisplay() {
           <DisplayAddVoter />
         </>
       )}
-      <Divider my={4} />
-      <DisplayGetProposalFromIndex />
     </Box>
   );
 }
