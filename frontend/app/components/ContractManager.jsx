@@ -25,19 +25,6 @@ export default function ContractManager({ isConnected }) {
         </Alert>
       )}
       <DisplayProposals />
-
-      {/* {isRegistered && <Text>Vous êtes enregistré comme votant.</Text>}
-            {isRegistered === false && <Text>Vous n'êtes pas enregistré comme votant.</Text>} */}
-
-      <VStack spacing={4}>
-        {isConnected && isRegistered && workflowStatus === 1 && (
-          <>
-            <DisplayAddProposal />
-            <Divider my={4} />
-            <Text>Tableau des proposals :</Text>
-          </>
-        )}
-      </VStack>
     </Box>
   );
 }

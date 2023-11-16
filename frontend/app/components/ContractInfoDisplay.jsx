@@ -4,10 +4,11 @@ import { useDataContext } from "../context/DataContext";
 import { useContext } from "react";
 import ContractContext from "../context/ContractContext";
 import DisplayAddVoter from "./DisplayAddVoter";
+import DisplayAddProposal from "./DisplayAddProposal";
 
 export default function ContractInfoDisplay() {
   const { addresses, proposalIds } = useDataContext();
-  const { workflowStatus, isOwner } = useContext(ContractContext);
+  const { workflowStatus, isOwner, isRegistered } = useContext(ContractContext);
 
   return (
     <Box flex={1} p={4}>
@@ -19,6 +20,13 @@ export default function ContractInfoDisplay() {
         <>
           <Divider my={4} />
           <DisplayAddVoter />
+        </>
+      )}
+
+      {isRegistered && workflowStatus === 1 && (
+        <>
+          <Divider my={4} />
+          <DisplayAddProposal />
         </>
       )}
     </Box>
