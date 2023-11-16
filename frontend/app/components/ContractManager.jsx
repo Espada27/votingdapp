@@ -9,6 +9,8 @@ import DisplayProposals from './DisplayProposals';
 export default function ContractManager({ isConnected }) {
     const { workflowStatus, isOwner, isRegistered } = useContext(ContractContext);
 
+    const shouldDisplayProposals = isConnected && isRegistered && workflowStatus >= 1 && workflowStatus <= 6;
+
 
     return (
         <Box flex={2} p={4} borderRight="1px" borderColor="gray.200">
@@ -18,10 +20,9 @@ export default function ContractManager({ isConnected }) {
                     Veuillez connecter votre portefeuille à notre Dapp.
                 </Alert>
             )}
-            <DisplayProposals />
     
-            {/* {isRegistered && <Text>Vous êtes enregistré comme votant.</Text>}
-            {isRegistered === false && <Text>Vous n'êtes pas enregistré comme votant.</Text>} */}
+            {isRegistered && <Text>Vous êtes enregistré comme votant.</Text>}
+            {isRegistered === false && <Text>Vous n'êtes pas enregistré comme votant.</Text>}
 
             <VStack spacing={4}>
                 {isConnected && isOwner && workflowStatus === 0 && <DisplayAddVoter />}
@@ -30,10 +31,12 @@ export default function ContractManager({ isConnected }) {
                     <>
                         <DisplayAddProposal />
                         <Divider my={4} />
-                        <Text>Tableau des proposals :</Text>
                         
                     </>
                 )}
+                {shouldDisplayProposals && <DisplayProposals />}
+
+
             </VStack>
         </Box>
     );

@@ -23,7 +23,8 @@ export default function Main() {
       tallyVotes,
       addVoter,
       getOneProposal,
-      addProposal
+      addProposal,
+      setVote,
   } = useContractState();
 
   
@@ -41,6 +42,7 @@ export default function Main() {
       tallyVotes,
       getOneProposal,
       addProposal,
+      setVote,
   }
 
   return (
