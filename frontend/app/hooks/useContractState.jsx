@@ -405,9 +405,7 @@ const useContractState = () => {
   }, [address, isConnected, voters]);
 
   useEffect(() => {
-    if (address) {
-      checkIfRegistered();
-    }
+    checkIfRegistered();
   }, [address]);
 
   useEffect(() => {
