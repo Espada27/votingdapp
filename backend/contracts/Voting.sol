@@ -3,20 +3,38 @@
 pragma solidity 0.8.23;
 import "@openzeppelin/contracts/access/Ownable.sol";
 
+/**
+ * @title Voting
+ * @author Maxime GOGNIES & Jonathan Dugard
+ * @notice Ce contrat permet d'organiser un processus de vote en plusieurs étapes.
+ * Il permet d'abord d'enregistrer les électeurs, puis de soumettre des propositions,
+ * de voter pour les propositions, et enfin de comptabiliser les votes pour déterminer
+ * la proposition gagnante.
+ * @dev Le contrat hérite de `Ownable` d'OpenZeppelin pour gérer les permissions d'administration.
+ */
+
 contract Voting is Ownable {
     uint public winningProposalID;
 
+
+    /// @notice Représente un électeur dans le système de vote.
+    /// @dev Contient des informations sur l'état de vote d'un électeur.
     struct Voter {
         bool isRegistered;
         bool hasVoted;
         uint votedProposalId;
     }
 
+
+    /// @notice Représente une proposition dans le système de vote.
+    /// @dev Contient la description de la proposition et le nombre de votes qu'elle a reçus.
     struct Proposal {
         string description;
         uint voteCount;
     }
 
+    /// @notice Représente l'état actuel du processus de vote.
+    /// @dev Utilisé pour contrôler les étapes du processus de vote et restreindre les actions aux étapes appropriées.
     enum WorkflowStatus {
         RegisteringVoters,
         ProposalsRegistrationStarted,
@@ -40,12 +58,13 @@ contract Voting is Ownable {
 
     constructor() Ownable(msg.sender) {}
 
+
+    /// @notice Vérifie que l'appelant est un électeur enregistré.
+    /// @dev Utilisé pour restreindre certaines fonctions aux seuls électeurs enregistrés.
     modifier onlyVoters() {
         require(voters[msg.sender].isRegistered, "You're not a voter");
         _;
     }
-
-    // on peut faire un modifier pour les états
 
     // ::::::::::::: GETTERS ::::::::::::: //
 
@@ -63,6 +82,12 @@ contract Voting is Ownable {
 
     // ::::::::::::: REGISTRATION ::::::::::::: //
 
+
+    /**
+    * @notice Enregistre un nouvel électeur.
+    * @dev Ajoute l'adresse `_addr` à la liste des électeurs autorisés. Ne peut être appelée que par le propriétaire et seulement si l'état est `RegisteringVoters`.
+    * @param _addr L'adresse Ethereum de l'électeur à enregistrer.
+    */
     function addVoter(address _addr) external onlyOwner {
         require(
             workflowStatus == WorkflowStatus.RegisteringVoters,
@@ -75,7 +100,11 @@ contract Voting is Ownable {
     }
 
     // ::::::::::::: PROPOSAL ::::::::::::: //
-
+    
+    /** 
+    * @notice Enregistre une proposition, par un électeur.
+    * @param _desc La description de la proposition.
+    */
     function addProposal(string calldata _desc) external onlyVoters {
         require(
             workflowStatus == WorkflowStatus.ProposalsRegistrationStarted,
@@ -96,6 +125,12 @@ contract Voting is Ownable {
 
     // ::::::::::::: VOTE ::::::::::::: //
 
+
+    /**
+    * @notice Enregistre le vote d'un électeur pour une proposition spécifique.
+    * @dev Enregistre le vote pour la proposition avec l'identifiant `_id`. L'électeur ne peut voter qu'une fois et seulement quand la session de vote est active.
+    * @param _id L'identifiant de la proposition pour laquelle voter.
+    */
     function setVote(uint _id) external onlyVoters {
         require(
             workflowStatus == WorkflowStatus.VotingSessionStarted,
@@ -119,7 +154,7 @@ contract Voting is Ownable {
     }
 
     // ::::::::::::: STATE ::::::::::::: //
-
+    
     function startProposalsRegistering() external onlyOwner {
         require(
             workflowStatus == WorkflowStatus.RegisteringVoters,
