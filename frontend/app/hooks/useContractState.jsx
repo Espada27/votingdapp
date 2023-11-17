@@ -5,6 +5,7 @@ import {
   prepareWriteContract,
   writeContract,
   getWalletClient,
+  waitForTransaction,
 } from "@wagmi/core";
 import { abi, contractAddress } from "../constants/constant";
 import { useAccount } from "wagmi";
@@ -31,7 +32,7 @@ const useContractState = () => {
         account: walletClient.account,
       });
       const { hash } = await writeContract(request);
-      //await waitForTransaction(hash);
+      await waitForTransaction({ hash });
       toast.displayVoteSuccess();
     } catch (error) {
       console.error("Erreur lors du vote:", error);
@@ -51,7 +52,7 @@ const useContractState = () => {
         account: walletClient.account,
       });
       const { hash } = await writeContract(request);
-      //await waitForTransaction(hash);
+      await waitForTransaction({ hash });
       toast.displayAddProposalSuccess();
     } catch (error) {
       console.error("Erreur lors de l'ajout de la proposal:", error);
@@ -118,7 +119,7 @@ const useContractState = () => {
 
       const { hash } = await writeContract(request);
 
-      //await waitForTransaction(hash);
+      await waitForTransaction({ hash });
 
       toast.displayAddVoterSuccess();
 
@@ -141,6 +142,8 @@ const useContractState = () => {
         functionName: "startProposalsRegistering",
       });
       const { hash } = await writeContract(request);
+      await waitForTransaction({ hash });
+
       await fetchWorkflowStatus();
       toast.displayNextStepSuccess(workflowStatus + 1);
     } catch (error) {
@@ -164,6 +167,8 @@ const useContractState = () => {
         functionName: "endProposalsRegistering",
       });
       const { hash } = await writeContract(request);
+      await waitForTransaction({ hash });
+
       await fetchWorkflowStatus();
       toast.displayNextStepSuccess(workflowStatus + 1);
     } catch (error) {
@@ -186,6 +191,8 @@ const useContractState = () => {
         functionName: "startVotingSession",
       });
       const { hash } = await writeContract(request);
+      await waitForTransaction({ hash });
+
       await fetchWorkflowStatus();
       toast.displayNextStepSuccess(workflowStatus + 1);
     } catch (error) {
@@ -209,6 +216,8 @@ const useContractState = () => {
         functionName: "endVotingSession",
       });
       const { hash } = await writeContract(request);
+      await waitForTransaction({ hash });
+
       await fetchWorkflowStatus();
       toast.displayNextStepSuccess(workflowStatus + 1);
     } catch (error) {
@@ -232,6 +241,8 @@ const useContractState = () => {
         functionName: "tallyVotes",
       });
       const { hash } = await writeContract(request);
+      await waitForTransaction({ hash });
+
       await fetchWorkflowStatus();
       toast.displayNextStepSuccess(workflowStatus + 1);
     } catch (error) {
