@@ -14,10 +14,13 @@ import {
   Heading,
 } from "@chakra-ui/react";
 import { useDataContext } from "../context/DataContext";
+import ContractContext from '../context/ContractContext';
 
 const DisplayProposals = () => {
   const [openRows, setOpenRows] = useState(new Set()); // initialisation de gestion de l'ouverture des descriptions
   const { proposals } = useDataContext();
+  const { setVote } = useContext(ContractContext);
+
 
   // Gestion de l'ouverture des descritpions des proposals
   const toggleRow = (index) => {
@@ -28,6 +31,11 @@ const DisplayProposals = () => {
     }
     setOpenRows(new Set(openRows));
   };
+
+  const handleClick = (index, event) => {
+    event.stopPropagation();
+    setVote(index + 1)
+  }
 
   return (
     <Box overflowY="auto" maxH="800px">
@@ -49,9 +57,9 @@ const DisplayProposals = () => {
                   {proposal.description.slice(0, 50)}
                   {proposal.description.length > 50 ? "..." : ""}
                 </Td>
-                <Td>{proposal.voteCount}</Td>
-                <Td>
-                  <Button colorScheme="blue">Voter</Button>
+                <Td>{proposal.voteCount.toString()}</Td>
+                <Td key={index}>
+                  <Button colorScheme="blue" onClick={(e) => handleClick(index, e)}>Voter</Button>
                 </Td>
               </Tr>
               <Tr>

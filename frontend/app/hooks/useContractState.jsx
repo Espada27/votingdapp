@@ -19,6 +19,41 @@ const useContractState = () => {
   const [isRegistered, setIsRegistered] = useState(false);
   const { address, isConnected } = useAccount();
   const toast = useToast();
+  
+
+
+
+  const setVote = async (indexDeLaProposal) => {
+    console.log("Vote pour la proposition :", indexDeLaProposal);
+    const walletClient = await getWalletClient();
+    try {
+      const { request } = await prepareWriteContract({
+        address: contractAddress,
+        abi: abi,
+        functionName: "setVote",
+        args: [indexDeLaProposal],
+        account: walletClient.account,
+      })
+      const { hash } = await writeContract(request);
+      //await waitForTransaction(hash);
+      toast({
+        title: "Succès !",
+        description: "Vous avez voté pour la proposal",
+        status: "success",
+        duration: 9000,
+        isClosable: true,
+      });
+    } catch (error) {
+      console.error("Erreur lors du vote:", error);
+      toast({
+        title: "Erreur",
+        description: "Une erreur est survenue lors du vote",
+        status: "error",
+        duration: 9000,
+        isClosable: true,
+      });
+    }
+  }
 
   const addProposal = async (proposal) => {
     console.log("adding proposal : ", proposal);
@@ -428,6 +463,7 @@ const useContractState = () => {
     getOneProposal,
     getProposals,
     addProposal,
+    setVote
   };
 };
 
