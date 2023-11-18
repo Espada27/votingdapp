@@ -1,5 +1,5 @@
 "use client";
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import {
   Table,
   Thead,
@@ -14,24 +14,57 @@ import {
   Heading,
 } from "@chakra-ui/react";
 import { useDataContext } from "../context/DataContext";
+import ContractContext from "../context/ContractContext";
 
 const DisplayProposals = () => {
-  const [openRows, setOpenRows] = useState(new Set()); // initialisation de gestion de l'ouverture des descriptions
+  const [openRows, setOpenRows] = useState(new Set());
+  const [sortedProposals, setSortedProposals] = useState([]);
   const { proposals } = useDataContext();
+  const { setVote, workflowStatus } = useContext(ContractContext);
+  const [isSorting, setIsSorting] = useState(false)
 
-  // Gestion de l'ouverture des descritpions des proposals
-  const toggleRow = (index) => {
-    if (openRows.has(index)) {
-      openRows.delete(index);
-    } else {
-      openRows.add(index);
+
+
+  const fadeInStyle = {
+    animation: `fadeIn 3s`,
+    '@keyframes fadeIn': {
+      from: { opacity: 0 },
+      to: { opacity: 1 }
     }
-    setOpenRows(new Set(openRows));
+  };
+
+
+
+  // Tri des propositions en fonction des votes
+  useEffect(() => {
+    if (workflowStatus === 5) {
+      let sorted = [...proposals].sort((a, b) => b.voteCount.toString() - a.voteCount.toString());
+      setSortedProposals(sorted);
+      setIsSorting(true);
+    } else {
+      setSortedProposals(proposals);
+    }
+  }, [workflowStatus, proposals]);
+  
+
+  const toggleRow = (index) => {
+    const newOpenRows = new Set(openRows);
+    if (newOpenRows.has(index)) {
+      newOpenRows.delete(index);
+    } else {
+      newOpenRows.add(index);
+    }
+    setOpenRows(newOpenRows);
+  };
+
+  const handleClick = (index, event) => {
+    event.stopPropagation();
+    setVote(index + 1);
   };
 
   return (
     <Box overflowY="auto" maxH="800px">
-      <Heading as="h2">Tableau des proposals :</Heading>
+      <Heading as="h2">Tableau des propositions :</Heading>
       <Divider my={4} />
       <Table variant="simple">
         <Thead>
@@ -42,16 +75,18 @@ const DisplayProposals = () => {
           </Tr>
         </Thead>
         <Tbody>
-          {proposals.map((proposal, index) => (
-            <>
-              <Tr key={index} onClick={() => toggleRow(index)} cursor="pointer">
+          {sortedProposals.map((proposal, index) => (
+            <React.Fragment>
+              <Tr 
+                key={index}
+                style={{...fadeInStyle, backgroundColor: index === 0 && workflowStatus === 5 ? 'lightgreen' : 'white'}}
+                onClick={() => toggleRow(index)} 
+                cursor="pointer"
+                >
+                <Td>{proposal.description.slice(0, 50)}{proposal.description.length > 50 ? "..." : ""}</Td>
+                <Td>{proposal.voteCount.toString()}</Td>
                 <Td>
-                  {proposal.description.slice(0, 50)}
-                  {proposal.description.length > 50 ? "..." : ""}
-                </Td>
-                <Td>{proposal.voteCount}</Td>
-                <Td>
-                  <Button colorScheme="blue">Voter</Button>
+                  <Button colorScheme="blue" onClick={(e) => handleClick(index, e)}>Voter</Button>
                 </Td>
               </Tr>
               <Tr>
@@ -59,12 +94,11 @@ const DisplayProposals = () => {
                   <Collapse in={openRows.has(index)}>
                     <Box p={4} borderWidth="1px" mt={2}>
                       {proposal.description}
-                      {/* Ajoute d'autres détails si nécessaire ici ? */}
                     </Box>
                   </Collapse>
                 </Td>
               </Tr>
-            </>
+            </React.Fragment>
           ))}
         </Tbody>
       </Table>

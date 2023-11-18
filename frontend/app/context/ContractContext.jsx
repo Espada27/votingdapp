@@ -14,6 +14,7 @@ const ContractContext = createContext({
     addVoter: () => {},
     getOneProposal: () => {},
     addProposal: () => {},
+    setVote: () => {},
     
 });
 
