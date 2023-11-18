@@ -11,7 +11,6 @@ export const useDataContext = () => {
   return useContext(DataContext);
 };
 
-
 export const DataProvider = ({ children }) => {
   const [addresses, setAddresses] = useState([]);
   const [liveAddresses, setLiveAddresses] = useState([]);
@@ -22,28 +21,32 @@ export const DataProvider = ({ children }) => {
   const viemPublicClient = usePublicClient();
   const [voteUpdateTrigger, setVoteUpdateTrigger] = useState(false);
 
-
   useContractEvent({
     address: contractAddress,
     abi,
     eventName: "Voted",
     listener: () => {
-      setVoteUpdateTrigger(prev => !prev);
+      setVoteUpdateTrigger((prev) => !prev);
     },
   });
+
   useEffect(() => {
     const fetchUpdatedProposals = async () => {
       try {
         const updatedProposals = await getProposals(proposalIds);
         setProposals(updatedProposals);
       } catch (error) {
-        console.error("Erreur lors de la récupération des propositions:", error);
-      }``
+        console.error(
+          "Erreur lors de la récupération des propositions:",
+          error
+        );
+      }
     };
 
-    fetchUpdatedProposals();
-  }, [voteUpdateTrigger]);
-
+    if (proposalIds.length > 0) {
+      fetchUpdatedProposals();
+    }
+  }, [voteUpdateTrigger, proposalIds]);
 
   //Get past proposals with the received Ids
   useEffect(() => {
