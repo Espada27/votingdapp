@@ -19,6 +19,8 @@ const useContractState = () => {
   const [isRegistered, setIsRegistered] = useState(false);
   const { address, isConnected } = useAccount();
   const toast = useToast();
+  const [hasVoted, setHasVoted] = useState(false);
+  const [votedProposalId, setVotedProposalId] = useState(null);
 
   const setVote = async (indexDeLaProposal) => {
     console.log("Vote pour la proposition :", indexDeLaProposal);
@@ -34,6 +36,8 @@ const useContractState = () => {
       const { hash } = await writeContract(request);
       await waitForTransaction({ hash });
       toast.displayVoteSuccess();
+      setVotedProposalId(indexDeLaProposal);
+      setHasVoted(true);
     } catch (error) {
       console.error("Erreur lors du vote:", error);
       toast.displayVoteError();
@@ -279,6 +283,8 @@ const useContractState = () => {
       });
 
       setIsRegistered(voterInfo.isRegistered);
+      setHasVoted(voterInfo.hasVoted);
+      setVotedProposalId(voterInfo.votedProposalId);
     } catch (err) {
       console.log("Error in checkIfRegistered:", err.message);
       setIsRegistered(false);
@@ -317,6 +323,8 @@ const useContractState = () => {
     workflowStatus,
     isOwner,
     isRegistered,
+    hasVoted,
+    votedProposalId,
     checkIfRegistered,
     startProposalsRegistering,
     endProposalsRegistering,
