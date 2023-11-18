@@ -5,12 +5,12 @@ import {
   prepareWriteContract,
   writeContract,
   getWalletClient,
+  waitForTransaction,
 } from "@wagmi/core";
 import { abi, contractAddress } from "../constants/constant";
-import { useToast } from "@chakra-ui/react";
 import { useAccount } from "wagmi";
-import { getWorkflowMessage } from "../components/utils/helper";
 import { isAddress } from "viem";
+import useToast from "./useToast";
 
 const useContractState = () => {
   const [workflowStatus, setWorkflowStatus] = useState(5);
@@ -19,9 +19,6 @@ const useContractState = () => {
   const [isRegistered, setIsRegistered] = useState(false);
   const { address, isConnected } = useAccount();
   const toast = useToast();
-  
-
-
 
   const setVote = async (indexDeLaProposal) => {
     console.log("Vote pour la proposition :", indexDeLaProposal);
@@ -33,27 +30,15 @@ const useContractState = () => {
         functionName: "setVote",
         args: [indexDeLaProposal],
         account: walletClient.account,
-      })
-      const { hash } = await writeContract(request);
-      //await waitForTransaction(hash);
-      toast({
-        title: "Succès !",
-        description: "Vous avez voté pour la proposal",
-        status: "success",
-        duration: 9000,
-        isClosable: true,
       });
+      const { hash } = await writeContract(request);
+      await waitForTransaction({ hash });
+      toast.displayVoteSuccess();
     } catch (error) {
       console.error("Erreur lors du vote:", error);
-      toast({
-        title: "Erreur",
-        description: "Une erreur est survenue lors du vote",
-        status: "error",
-        duration: 9000,
-        isClosable: true,
-      });
+      toast.displayVoteError();
     }
-  }
+  };
 
   const addProposal = async (proposal) => {
     console.log("adding proposal : ", proposal);
@@ -67,14 +52,8 @@ const useContractState = () => {
         account: walletClient.account,
       });
       const { hash } = await writeContract(request);
-      //await waitForTransaction(hash);
-      toast({
-        title: "Succès !",
-        description: "Vous avez ajouté une nouvelle proposition",
-        status: "success",
-        duration: 9000,
-        isClosable: true,
-      });
+      await waitForTransaction({ hash });
+      toast.displayAddProposalSuccess();
     } catch (error) {
       console.error("Erreur lors de l'ajout de la proposal:", error);
       throw error;
@@ -121,25 +100,12 @@ const useContractState = () => {
   const addVoter = async (voterAddress) => {
     console.log("Adding voter:", voterAddress);
     if (!isOwner) {
-      toast({
-        title: "Erreur",
-        description:
-          "Vous n'êtes pas propriétaire du contrat ! Vous ne pouvez pas accéder à ces fonctionnalités",
-        status: "error",
-        duration: 9000,
-        isClosable: true,
-      });
+      toast.displayNotOwnerError();
       return;
     }
 
     if (!voterAddress || !isAddress(voterAddress)) {
-      toast({
-        title: "Erreur",
-        description: "Adresse Ethereum non valide ou non fournie.",
-        status: "error",
-        duration: 9000,
-        isClosable: true,
-      });
+      toast.displayInvalidAddressError();
       return;
     }
 
@@ -153,39 +119,20 @@ const useContractState = () => {
 
       const { hash } = await writeContract(request);
 
-      //await waitForTransaction(hash);
+      await waitForTransaction({ hash });
 
-      toast({
-        title: "Succès !",
-        description: "Vous avez ajouté un nouveau votant",
-        status: "success",
-        duration: 9000,
-        isClosable: true,
-      });
+      toast.displayAddVoterSuccess();
 
       setVoters([...voters, voterAddress]);
     } catch (error) {
       console.error("Erreur lors de l'ajout d'un votant", error);
-      toast({
-        title: "Erreur",
-        description: "Une erreur est survenue lors de l'ajout du votant",
-        status: "error",
-        duration: 9000,
-        isClosable: true,
-      });
+      toast.displayAddVoterError();
     }
   };
 
   const startProposalsRegistering = async () => {
     if (!isOwner) {
-      toast({
-        title: "Erreur",
-        description:
-          "VOUS N'ETES PAS PROPRIETAIRE DU CONTRAT ! Vous ne pouvez accéder à ces fonctionnalités",
-        status: "error",
-        duration: 9000,
-        isClosable: true,
-      });
+      toast.displayNotOwnerError();
       return;
     }
     try {
@@ -195,40 +142,22 @@ const useContractState = () => {
         functionName: "startProposalsRegistering",
       });
       const { hash } = await writeContract(request);
+      await waitForTransaction({ hash });
+
       await fetchWorkflowStatus();
-      const updatedMessage = getWorkflowMessage(workflowStatus + 1);
-      toast({
-        title: "Congrats !",
-        description: updatedMessage,
-        status: "success",
-        duration: 9000,
-        isClosable: true,
-      });
+      toast.displayNextStepSuccess(workflowStatus + 1);
     } catch (error) {
       console.error(
         "Erreur lors du démarrage de l'enregistrement des propositions",
         error
       );
-      toast({
-        title: "Error.",
-        description: "Une erreur est survenue",
-        status: "error",
-        duration: 9000,
-        isClosable: true,
-      });
+      toast.displayNextStepError();
     }
   };
 
   const endProposalsRegistering = async () => {
     if (!isOwner) {
-      toast({
-        title: "Erreur",
-        description:
-          "VOUS N'ETES PAS PROPRIETAIRE DU CONTRAT ! Vous ne pouvez accéder à ces fonctionnalités",
-        status: "error",
-        duration: 9000,
-        isClosable: true,
-      });
+      toast.displayNotOwnerError();
       return;
     }
     try {
@@ -238,39 +167,21 @@ const useContractState = () => {
         functionName: "endProposalsRegistering",
       });
       const { hash } = await writeContract(request);
+      await waitForTransaction({ hash });
+
       await fetchWorkflowStatus();
-      const updatedMessage = getWorkflowMessage(workflowStatus + 1);
-      toast({
-        title: "Congrats !",
-        description: updatedMessage,
-        status: "success",
-        duration: 9000,
-        isClosable: true,
-      });
+      toast.displayNextStepSuccess(workflowStatus + 1);
     } catch (error) {
       console.error(
         "Erreur lors du démarrage de l'enregistrement des propositions",
         error
       );
-      toast({
-        title: "Error.",
-        description: "Une erreur est survenue",
-        status: "error",
-        duration: 9000,
-        isClosable: true,
-      });
+      toast.displayNextStepError();
     }
   };
   const startVotingSession = async () => {
     if (!isOwner) {
-      toast({
-        title: "Erreur",
-        description:
-          "VOUS N'ETES PAS PROPRIETAIRE DU CONTRAT ! Vous ne pouvez accéder à ces fonctionnalités",
-        status: "error",
-        duration: 9000,
-        isClosable: true,
-      });
+      toast.displayNotOwnerError();
       return;
     }
     try {
@@ -280,40 +191,22 @@ const useContractState = () => {
         functionName: "startVotingSession",
       });
       const { hash } = await writeContract(request);
+      await waitForTransaction({ hash });
+
       await fetchWorkflowStatus();
-      const updatedMessage = getWorkflowMessage(workflowStatus + 1);
-      toast({
-        title: "Congrats !",
-        description: updatedMessage,
-        status: "success",
-        duration: 9000,
-        isClosable: true,
-      });
+      toast.displayNextStepSuccess(workflowStatus + 1);
     } catch (error) {
       console.error(
         "Erreur lors du démarrage de l'enregistrement des propositions",
         error
       );
-      toast({
-        title: "Error.",
-        description: "Une erreur est survenue",
-        status: "error",
-        duration: 9000,
-        isClosable: true,
-      });
+      toast.displayNextStepError();
     }
   };
 
   const endVotingSession = async () => {
     if (!isOwner) {
-      toast({
-        title: "Erreur",
-        description:
-          "VOUS N'ETES PAS PROPRIETAIRE DU CONTRAT ! Vous ne pouvez accéder à ces fonctionnalités",
-        status: "error",
-        duration: 9000,
-        isClosable: true,
-      });
+      toast.displayNotOwnerError();
       return;
     }
     try {
@@ -323,40 +216,22 @@ const useContractState = () => {
         functionName: "endVotingSession",
       });
       const { hash } = await writeContract(request);
+      await waitForTransaction({ hash });
+
       await fetchWorkflowStatus();
-      const updatedMessage = getWorkflowMessage(workflowStatus + 1);
-      toast({
-        title: "Congrats !",
-        description: updatedMessage,
-        status: "success",
-        duration: 9000,
-        isClosable: true,
-      });
+      toast.displayNextStepSuccess(workflowStatus + 1);
     } catch (error) {
       console.error(
         "Erreur lors du démarrage de l'enregistrement des propositions",
         error
       );
-      toast({
-        title: "Error.",
-        description: "Une erreur est survenue",
-        status: "error",
-        duration: 9000,
-        isClosable: true,
-      });
+      toast.displayNextStepError();
     }
   };
 
   const tallyVotes = async () => {
     if (!isOwner) {
-      toast({
-        title: "Erreur",
-        description:
-          "VOUS N'ETES PAS PROPRIETAIRE DU CONTRAT ! Vous ne pouvez accéder à ces fonctionnalités",
-        status: "error",
-        duration: 9000,
-        isClosable: true,
-      });
+      toast.displayNotOwnerError();
       return;
     }
     try {
@@ -366,27 +241,16 @@ const useContractState = () => {
         functionName: "tallyVotes",
       });
       const { hash } = await writeContract(request);
+      await waitForTransaction({ hash });
+
       await fetchWorkflowStatus();
-      const updatedMessage = getWorkflowMessage(workflowStatus + 1);
-      toast({
-        title: "Congrats !",
-        description: updatedMessage,
-        status: "success",
-        duration: 9000,
-        isClosable: true,
-      });
+      toast.displayNextStepSuccess(workflowStatus + 1);
     } catch (error) {
       console.error(
         "Erreur lors du démarrage de l'enregistrement des propositions",
         error
       );
-      toast({
-        title: "Error.",
-        description: "Une erreur est survenue",
-        status: "error",
-        duration: 9000,
-        isClosable: true,
-      });
+      toast.displayNextStepError();
     }
   };
 
@@ -463,7 +327,7 @@ const useContractState = () => {
     getOneProposal,
     getProposals,
     addProposal,
-    setVote
+    setVote,
   };
 };
 
