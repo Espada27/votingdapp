@@ -61,7 +61,7 @@ const DisplayProposals = () => {
   };
 
   return (
-    <Box overflowY="auto" maxH="800px">
+    <Box overflowY="auto" maxH="70vh">
       <Heading as="h2">Tableau des propositions :</Heading>
       <Divider my={4} />
       <Table variant="simple">
