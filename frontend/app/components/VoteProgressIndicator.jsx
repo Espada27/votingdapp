@@ -12,7 +12,7 @@ import {
   StepStatus,
   Button,
 } from "@chakra-ui/react";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import ContractContext from "../context/ContractContext";
 
 const workflowSteps = [
@@ -49,6 +49,8 @@ const workflowSteps = [
 ];
 
 export default function VoteProgressIndicator() {
+  const [isLoading, setIsLoading] = useState(false);
+
   const {
     workflowStatus,
     startProposalsRegistering,
@@ -60,26 +62,32 @@ export default function VoteProgressIndicator() {
 
   const activeStep = workflowStatus;
 
-  const handleStepClick = (stepIndex) => {
-    switch (stepIndex) {
-      case 1:
-        startProposalsRegistering();
-        break;
-      case 2:
-        endProposalsRegistering();
-        break;
-      case 3:
-        startVotingSession();
-        break;
-      case 4:
-        endVotingSession();
-        break;
-      case 5:
-        tallyVotes();
-        break;
-      default:
-        console.log("Etape inconnue");
+  const handleStepClick = async (stepIndex) => {
+    setIsLoading(true);
+    try {
+      switch (stepIndex) {
+        case 1:
+          await startProposalsRegistering();
+          break;
+        case 2:
+          await endProposalsRegistering();
+          break;
+        case 3:
+          await startVotingSession();
+          break;
+        case 4:
+          await endVotingSession();
+          break;
+        case 5:
+          await tallyVotes();
+          break;
+        default:
+          console.log("Etape inconnue");
+      }
+    } catch (error) {
+      console.log("Error while changing the workflow status", error);
     }
+    setIsLoading(false);
   };
 
   return (
@@ -99,6 +107,8 @@ export default function VoteProgressIndicator() {
                 <Button
                   size="sm"
                   colorScheme="blue"
+                  isDisabled={isLoading}
+                  isLoading={isLoading}
                   onClick={() => handleStepClick(index)}
                 >
                   {step.active}
