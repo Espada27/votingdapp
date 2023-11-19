@@ -20,32 +20,30 @@ const DisplayProposals = () => {
   const [openRows, setOpenRows] = useState(new Set());
   const [sortedProposals, setSortedProposals] = useState([]);
   const { proposals } = useDataContext();
-  const { setVote, workflowStatus } = useContext(ContractContext);
-  const [isSorting, setIsSorting] = useState(false)
-
-
+  const { setVote, workflowStatus, hasVoted, votedProposalId } =
+    useContext(ContractContext);
+  const [isSorting, setIsSorting] = useState(false);
 
   const fadeInStyle = {
     animation: `fadeIn 3s`,
-    '@keyframes fadeIn': {
+    "@keyframes fadeIn": {
       from: { opacity: 0 },
-      to: { opacity: 1 }
-    }
+      to: { opacity: 1 },
+    },
   };
-
-
 
   // Tri des propositions en fonction des votes
   useEffect(() => {
     if (workflowStatus === 5) {
-      let sorted = [...proposals].sort((a, b) => b.voteCount.toString() - a.voteCount.toString());
+      let sorted = [...proposals].sort(
+        (a, b) => b.voteCount.toString() - a.voteCount.toString()
+      );
       setSortedProposals(sorted);
       setIsSorting(true);
     } else {
       setSortedProposals(proposals);
     }
   }, [workflowStatus, proposals]);
-  
 
   const toggleRow = (index) => {
     const newOpenRows = new Set(openRows);
@@ -63,7 +61,7 @@ const DisplayProposals = () => {
   };
 
   return (
-    <Box overflowY="auto" maxH="800px">
+    <Box overflowY="auto" maxH="70vh">
       <Heading as="h2">Tableau des propositions :</Heading>
       <Divider my={4} />
       <Table variant="simple">
@@ -76,20 +74,43 @@ const DisplayProposals = () => {
         </Thead>
         <Tbody>
           {sortedProposals.map((proposal, index) => (
-            <React.Fragment>
-              <Tr 
+            <React.Fragment key={`fragment-${index}`}>
+              <Tr
                 key={index}
-                style={{...fadeInStyle, backgroundColor: index === 0 && workflowStatus === 5 ? 'lightgreen' : 'white'}}
-                onClick={() => toggleRow(index)} 
+                style={{
+                  ...fadeInStyle,
+                  backgroundColor:
+                    index === 0 && workflowStatus === 5
+                      ? "lightgreen"
+                      : "white",
+                }}
+                onClick={() => toggleRow(index)}
                 cursor="pointer"
-                >
-                <Td>{proposal.description.slice(0, 50)}{proposal.description.length > 50 ? "..." : ""}</Td>
+              >
+                <Td>
+                  {proposal.description.slice(0, 50)}
+                  {proposal.description.length > 50 ? "..." : ""}
+                </Td>
                 <Td>{proposal.voteCount.toString()}</Td>
                 <Td>
-                  <Button colorScheme="blue" onClick={(e) => handleClick(index, e)}>Voter</Button>
+                  <Button
+                    isDisabled={workflowStatus != 3 || hasVoted}
+                    colorScheme={
+                      index === 0 && workflowStatus === 5
+                        ? "green"
+                        : workflowStatus != 5 &&
+                          hasVoted &&
+                          votedProposalId == index + 1
+                        ? "green"
+                        : "blue"
+                    }
+                    onClick={(e) => handleClick(index, e)}
+                  >
+                    Voter
+                  </Button>
                 </Td>
               </Tr>
-              <Tr>
+              <Tr key={`row2-${index}`}>
                 <Td colSpan={3}>
                   <Collapse in={openRows.has(index)}>
                     <Box p={4} borderWidth="1px" mt={2}>
