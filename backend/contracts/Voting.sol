@@ -48,6 +48,8 @@ contract Voting is Ownable {
     Proposal[] proposalsArray;
     mapping(address => Voter) voters;
 
+    // ::::::::::::: EVENTS ::::::::::::: //
+
     event VoterRegistered(address voterAddress);
     event WorkflowStatusChange(
         WorkflowStatus previousStatus,
@@ -55,6 +57,8 @@ contract Voting is Ownable {
     );
     event ProposalRegistered(uint proposalId);
     event Voted(address voter, uint proposalId);
+
+    
 
     constructor() Ownable(msg.sender) {}
 
@@ -113,13 +117,10 @@ contract Voting is Ownable {
         require(
             keccak256(abi.encode(_desc)) != keccak256(abi.encode("")),
             "Vous ne pouvez pas ne rien proposer"
-        ); // facultatif
-        // voir que desc est different des autres
-
+        );
         Proposal memory proposal;
         proposal.description = _desc;
         proposalsArray.push(proposal);
-        // proposalsArray.push(Proposal(_desc,0));
         emit ProposalRegistered(proposalsArray.length - 1);
     }
 
@@ -154,7 +155,12 @@ contract Voting is Ownable {
     }
 
     // ::::::::::::: STATE ::::::::::::: //
-    
+
+
+    /**
+     * @notice Démarre la période d'enregistrement des propositions.
+     * @dev Change le statut du workflow pour permettre l'enregistrement des propositions. Ne peut être appelée que par le propriétaire.
+     */
     function startProposalsRegistering() external onlyOwner {
         require(
             workflowStatus == WorkflowStatus.RegisteringVoters,
@@ -172,6 +178,11 @@ contract Voting is Ownable {
         );
     }
 
+
+    /**
+     * @notice Termine la période d'enregistrement des propositions.
+     * @dev Change le statut du workflow pour clôturer l'enregistrement des propositions. Ne peut être appelée que par le propriétaire.
+     */
     function endProposalsRegistering() external onlyOwner {
         require(
             workflowStatus == WorkflowStatus.ProposalsRegistrationStarted,
@@ -184,6 +195,10 @@ contract Voting is Ownable {
         );
     }
 
+    /**
+     * @notice Démarre la session de vote.
+     * @dev Change le statut du workflow pour permettre le début de la session de vote. Ne peut être appelée que par le propriétaire.
+     */
     function startVotingSession() external onlyOwner {
         require(
             workflowStatus == WorkflowStatus.ProposalsRegistrationEnded,
@@ -196,6 +211,10 @@ contract Voting is Ownable {
         );
     }
 
+    /**
+     * @notice Termine la session de vote.
+     * @dev Change le statut du workflow pour clôturer la session de vote. Ne peut être appelée que par le propriétaire.
+     */
     function endVotingSession() external onlyOwner {
         require(
             workflowStatus == WorkflowStatus.VotingSessionStarted,
@@ -208,6 +227,10 @@ contract Voting is Ownable {
         );
     }
 
+    /**
+     * @notice Comptabilise les votes et détermine la proposition gagnante.
+     * @dev Change le statut du workflow pour finaliser le processus de vote. Ne peut être appelée que par le propriétaire. Met à jour l'ID de la proposition gagnante.
+     */
     function tallyVotes() external onlyOwner {
         require(
             workflowStatus == WorkflowStatus.VotingSessionEnded,
