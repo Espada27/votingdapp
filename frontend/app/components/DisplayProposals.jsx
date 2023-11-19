@@ -74,7 +74,7 @@ const DisplayProposals = () => {
         </Thead>
         <Tbody>
           {sortedProposals.map((proposal, index) => (
-            <React.Fragment>
+            <React.Fragment key={`fragment-${index}`}>
               <Tr
                 key={index}
                 style={{
@@ -110,7 +110,7 @@ const DisplayProposals = () => {
                   </Button>
                 </Td>
               </Tr>
-              <Tr>
+              <Tr key={`row2-${index}`}>
                 <Td colSpan={3}>
                   <Collapse in={openRows.has(index)}>
                     <Box p={4} borderWidth="1px" mt={2}>
