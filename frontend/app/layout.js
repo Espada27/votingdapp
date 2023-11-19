@@ -6,14 +6,14 @@ import { configureChains, createConfig, WagmiConfig } from "wagmi";
 import { sepolia, hardhat } from "wagmi/chains";
 import { publicProvider } from "wagmi/providers/public";
 import { DataProvider } from "./context/DataContext";
-// import { alchemyProvider } from 'wagmi/providers/alchemy'
+import { alchemyProvider } from 'wagmi/providers/alchemy'
 
-// const ALCHEMY_KEY = process.env.NEXT_PUBLIC_ALCHEMY_KEY
+const ALCHEMY_KEY = process.env.NEXT_PUBLIC_ALCHEMY_KEY
 
 const { chains, publicClient } = configureChains(
   [hardhat, sepolia],
   [
-    //alchemyProvider({ apiKey: process.env.ALCHEMY_ID }),
+    alchemyProvider({ apiKey: ALCHEMY_KEY }),
     publicProvider()
   ]
 );
