@@ -3,10 +3,13 @@ import { Box, Text, Stat, StatLabel, StatNumber, useColorModeValue, Divider } fr
 import { useDataContext } from "../context/DataContext";
 import ContractContext from "../context/ContractContext";
 
+
 const WinningProposalDisplay = () => {
   const { proposals } = useDataContext();
   const { workflowStatus } = useContext(ContractContext);
   const [winningProposal, setWinningProposal] = useState(null);
+  const boxBg = useColorModeValue('gray.100', 'gray.700');
+
 
   useEffect(() => {
     if (workflowStatus === 5 && proposals.length > 0) {
@@ -22,7 +25,7 @@ const WinningProposalDisplay = () => {
   return (
     <Box 
       p={4} 
-      bg={useColorModeValue('gray.100', 'gray.700')} 
+      bg={boxBg}
       borderRadius="lg"
       borderWidth="2px"
       borderColor="lightgreen"
