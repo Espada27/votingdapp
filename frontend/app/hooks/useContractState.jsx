@@ -126,8 +126,8 @@ const useContractState = () => {
       await waitForTransaction({ hash });
 
       toast.displayAddVoterSuccess();
-
-      setVoters([...voters, voterAddress]);
+      checkIfRegistered()
+      setVoters(voters => [...voters, voterAddress]);
     } catch (error) {
       console.error("Erreur lors de l'ajout d'un votant", error);
       toast.displayAddVoterError();
