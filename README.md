@@ -20,7 +20,7 @@ Vidéo de démonstration: https://www.loom.com/share/47b4ad8c13904769b38f6024cbe
 
   
 
-✅ Déployé sur Vercel: https://votingdapp-1fekwhjf5-jonathans-projects-10198929.vercel.app/
+✅ Déployé sur Vercel: https://votingdapp-seven.vercel.app/
 
 ✅ Smart contract déployé sur Sepolia: https://sepolia.etherscan.io/address/0x5a02ddf2124f13862a96a9525e59b749981d3a1a
 
