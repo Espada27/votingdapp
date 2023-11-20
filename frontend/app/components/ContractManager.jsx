@@ -1,12 +1,11 @@
 "use client";
 import { Box, Alert, AlertIcon, Text } from "@chakra-ui/react";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import ContractContext from "../context/ContractContext";
 import DisplayProposals from "./DisplayProposals";
 
 export default function ContractManager({ isConnected }) {
-  const { isRegistered } = useContext(ContractContext);
-
+  const { isRegistered, isOwner } = useContext(ContractContext);
   return (
     <Box flex={2} p={4} borderRight="1px" borderColor="gray.200">
       {!isConnected && (
@@ -19,6 +18,7 @@ export default function ContractManager({ isConnected }) {
       {isRegistered === false && (
         <Text>Vous n'êtes pas enregistré comme votant.</Text>
       )}
+      {isOwner && <Text>Vous êtes l'owner du contrat</Text>}
       <DisplayProposals />
     </Box>
   );
