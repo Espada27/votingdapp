@@ -23,6 +23,7 @@ const DisplayProposals = () => {
   const { setVote, workflowStatus, hasVoted, votedProposalId } =
     useContext(ContractContext);
   const [isSorting, setIsSorting] = useState(false);
+  const [isLoading, setIsLoading] = useState({ loading: false, index: null });
 
   const fadeInStyle = {
     animation: `fadeIn 3s`,
@@ -55,9 +56,15 @@ const DisplayProposals = () => {
     setOpenRows(newOpenRows);
   };
 
-  const handleClick = (index, event) => {
+  const handleClick = async (index, event) => {
+    setIsLoading({ loading: true, index });
     event.stopPropagation();
-    setVote(index + 1);
+    try {
+      await setVote(index + 1);
+    } catch (error) {
+      console.log("Error while voting for a proposal", error);
+    }
+    setIsLoading({ loading: false, index: null });
   };
 
   return (
@@ -94,7 +101,10 @@ const DisplayProposals = () => {
                 <Td>{proposal.voteCount.toString()}</Td>
                 <Td>
                   <Button
-                    isDisabled={workflowStatus != 3 || hasVoted}
+                    isDisabled={
+                      workflowStatus != 3 || hasVoted || isLoading.loading
+                    }
+                    isLoading={isLoading.loading && isLoading.index === index}
                     colorScheme={
                       index === 0 && workflowStatus === 5
                         ? "green"
